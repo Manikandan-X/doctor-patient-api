@@ -55,7 +55,7 @@ app/
 ### 1️⃣ Clone the repository
 
 ```
-git clone https://github.com/Manikandan-X/doctor-appointment-api
+git clone https://github.com/Manikandan-X/doctor-patient-api
 cd doctor-api
 ```
 
