@@ -1,70 +1,102 @@
-# Getting Started with Create React App
+# 🖥 Frontend - Doctor Appointment System (React)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is the frontend application for the Doctor Appointment System, built using React and integrated with a FastAPI backend.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 🚀 Features
 
-### `npm start`
+* 🔐 Login with JWT authentication
+* 👨‍⚕️ View list of doctors
+* 🧑 View list of patients
+* 📅 Book appointments
+* 🔄 Real-time updates using WebSockets
+* 🔒 Protected routes (requires login)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🛠 Tech Stack
 
-### `npm test`
+* React
+* Axios
+* React Router
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## ⚙️ Setup Instructions
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 1️⃣ Go to frontend folder
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```bash
+cd frontend
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+### 2️⃣ Install dependencies
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```bash
+npm install
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### 3️⃣ Run the application
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```bash
+npm start
+```
 
-## Learn More
+---
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 🌐 Application URL
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```
+http://localhost:3000
+```
 
-### Code Splitting
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## 🔗 Backend Requirement
 
-### Analyzing the Bundle Size
+Make sure backend is running at:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```
+http://127.0.0.1:8000
+```
 
-### Making a Progressive Web App
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## ⚡ WebSocket Connection
 
-### Advanced Configuration
+```
+ws://127.0.0.1:8000/ws/{doctor_id}
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+Used for:
 
-### Deployment
+* New appointment notifications
+* Appointment status updates
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+---
 
-### `npm run build` fails to minify
+## 🧠 How It Works
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+* User logs in → token stored in localStorage
+* Token sent with every API request
+* Backend validates user
+* WebSocket connects using doctor ID for live updates
+
+---
+
+## ⚠️ Important Notes
+
+* Backend must be running before starting frontend
+* If you get `401 Unauthorized`, login again
+* Do not open protected routes directly without login
+
+---
+
+## 👨‍💻 Author
+
+Manikandan S
