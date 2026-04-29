@@ -1,24 +1,103 @@
-# 🏥 Doctor Appointment API (FastAPI)
+# 🏥 Doctor Appointment System (Full-Stack Application)
 
-A backend API built using FastAPI to manage doctors, patients, and appointments with JWT authentication.
+A complete full-stack application built using **FastAPI (Backend)** and **React (Frontend)** to manage doctors, patients, and appointments with real-time updates and secure authentication.
 
 ---
 
 ## 🚀 Features
 
-* 🔐 JWT Authentication (Register & Login)
-* 👨‍⚕️ Doctor Management (CRUD + Activate/Deactivate)
-* 🧑‍🤝‍🧑 Patient Management (CRUD)
-* 📅 Appointment Booking System
-* ✅ Appointment Status (Scheduled / Completed / Cancelled)
-* 🔎 Filtering (Doctor specialization, Patient search)
-* 📄 Pagination support
-* ⚙️ Environment variables (.env)
-* 🧱 Clean modular structure
+### 🔐 Authentication
+
+* JWT-based Register & Login
+* Secure protected APIs using Bearer token
+
+### 👨‍⚕️ Doctor Management
+
+* Create, update, delete doctors
+* Activate / deactivate doctors
+* Filter by specialization
+* Pagination support
+
+### 🧑 Patient Management
+
+* Full CRUD operations
+* List all patients
+
+### 📅 Appointment System
+
+* Book appointments
+* View by doctor / patient
+* Status updates:
+
+  * Scheduled
+  * Completed
+  * Cancelled
+
+---
+
+## ⚡ Real-Time Features (WebSockets)
+
+* 🔔 Notify doctor when a new appointment is booked
+* 🔄 Live appointment status updates (Cancel / Complete)
+* User-specific WebSocket connection
+
+```
+ws://127.0.0.1:8000/ws/{doctor_id}
+```
+
+---
+
+## 📂 File Upload Module
+
+* Upload patient reports/documents
+* Files stored locally (`/uploads`)
+* View/download files via API
+
+---
+
+## 🧠 Advanced Backend Features
+
+* 📄 Pagination (`skip`, `limit`)
+* 🔎 Search & filtering (doctor specialization)
+* 🚦 API rate limiting (basic)
+* ⚙️ Background tasks (FastAPI BackgroundTasks)
+* 📝 Logging for API requests & errors
+* ⚡ Caching (optional – not implemented)
+
+---
+
+## 🧪 Testing
+
+* Basic unit tests using `pytest`
+* Covered important APIs
+
+```
+python -m pytest -v
+```
+
+---
+
+## 🖥 Frontend (React)
+
+### Pages:
+
+* Login page
+* Doctors listing
+* Patients listing
+* Book Appointment UI
+
+### Features:
+
+* API integration with FastAPI
+* JWT token handling
+* Protected routes
+* Real-time notifications (WebSocket)
 
 ---
 
 ## 🛠 Tech Stack
+
+### Backend:
 
 * FastAPI
 * Python
@@ -27,6 +106,12 @@ A backend API built using FastAPI to manage doctors, patients, and appointments 
 * Pydantic
 * JWT (python-jose)
 * Passlib (bcrypt)
+
+### Frontend:
+
+* React
+* Axios
+* React Router
 
 ---
 
@@ -39,13 +124,22 @@ app/
  │    ├── doctor.py
  │    ├── patient.py
  │    ├── appointment.py
+ │    ├── websocket.py
+ │    ├── file.py
  │
  ├── models/
  ├── schemas/
+ ├── services/
+ ├── utils/
  ├── database.py
  ├── deps.py
- ├── auth.py
  ├── main.py
+
+frontend/
+ ├── src/
+ │    ├── pages/
+ │    ├── api/
+ │    ├── App.js
 ```
 
 ---
@@ -56,7 +150,7 @@ app/
 
 ```
 git clone https://github.com/Manikandan-X/doctor-patient-api
-cd doctor-api
+cd doctor-patient-api
 ```
 
 ---
@@ -88,18 +182,32 @@ ACCESS_TOKEN_EXPIRE_MINUTES=30
 
 ---
 
-### 5️⃣ Run the server
+### 5️⃣ Run Backend
 
 ```
-uvicorn app.main:app --reload
+python -m uvicorn app.main:app --reload
+```
+
+👉 API Docs:
+
+```
+http://127.0.0.1:8000/docs
 ```
 
 ---
 
-### 6️⃣ Open API docs
+### 6️⃣ Run Frontend
 
 ```
-http://127.0.0.1:8000/docs
+cd frontend
+npm install
+npm start
+```
+
+👉 Frontend:
+
+```
+http://localhost:3000
 ```
 
 ---
@@ -118,7 +226,7 @@ POST /auth/register
 POST /auth/login
 ```
 
-👉 Returns JWT token → use in Authorization header:
+Use token:
 
 ```
 Authorization: Bearer <your_token>
@@ -130,40 +238,41 @@ Authorization: Bearer <your_token>
 
 ### 👨‍⚕️ Doctors
 
-* POST `/doctors/` → Create doctor
-* GET `/doctors/` → Get all doctors (with filter & pagination)
-* PUT `/doctors/{id}` → Update doctor
-* DELETE `/doctors/{id}` → Delete doctor
-* PATCH `/doctors/{id}/activate` → Activate doctor
-* PATCH `/doctors/{id}/deactivate` → Deactivate doctor
+* POST `/doctors/`
+* GET `/doctors/`
+* PUT `/doctors/{id}`
+* DELETE `/doctors/{id}`
+* PATCH `/doctors/{id}/activate`
+* PATCH `/doctors/{id}/deactivate`
 
 ---
 
 ### 🧑 Patients
 
-* POST `/patients/` → Create patient
-* GET `/patients/` → Get all patients
-* PUT `/patients/{id}` → Update patient
-* DELETE `/patients/{id}` → Delete patient
+* POST `/patients/`
+* GET `/patients/`
+* PUT `/patients/{id}`
+* DELETE `/patients/{id}`
 
 ---
 
 ### 📅 Appointments
 
-* POST `/appointments/` → Create appointment
-* GET `/appointments/` → Get all appointments
-* GET `/appointments/doctor/{id}` → Get by doctor
-* GET `/appointments/patient/{id}` → Get by patient
-* PATCH `/appointments/{id}/cancel` → Cancel appointment
-* PATCH `/appointments/{id}/complete` → Mark as completed
+* POST `/appointments/`
+* GET `/appointments/`
+* GET `/appointments/doctor/{id}`
+* GET `/appointments/patient/{id}`
+* PATCH `/appointments/{id}/cancel`
+* PATCH `/appointments/{id}/complete`
 
 ---
 
 ## 🧠 Business Logic
 
-* ❌ Cannot create appointment with inactive doctor
-* ❌ Cannot delete doctor if appointments exist
-* ✔ Only authenticated users can access protected APIs
+* ❌ Cannot book appointment with inactive doctor
+* ❌ Cannot complete cancelled appointment
+* ❌ Cannot cancel completed appointment
+* ✔ Only authenticated users can access APIs
 
 ---
 
@@ -173,7 +282,7 @@ Authorization: Bearer <your_token>
 {
   "doctor_id": 1,
   "patient_id": 1,
-  "appointment_date": "2026-04-25T10:00:00"
+  "appointment_date": "2026-04-25"
 }
 ```
 
@@ -181,22 +290,30 @@ Authorization: Bearer <your_token>
 
 ## 📸 Screenshots
 
-*Add Swagger UI screenshots here*
+* Swagger UI
+* React UI (Login, Doctors, Booking)
 
 ---
 
 ## 📬 Postman Collection
 
-*Add your exported Postman collection JSON file*
+(Add your exported Postman collection JSON file here)
 
 ---
 
 ## 👨‍💻 Author
 
-Manikandan S
+**Manikandan S**
 
 ---
 
 ## 📝 Notes
 
-This project is built for learning and demonstration of backend development using FastAPI with best practices like modular structure, authentication, and validation.
+This project demonstrates:
+
+* Full-stack development (FastAPI + React)
+* REST API design
+* Authentication & security (JWT)
+* Real-time communication using WebSockets
+* File handling (upload & download)
+* Clean architecture and modular coding practices

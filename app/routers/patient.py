@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from app.models import Patient
 from app.schemas import PatientCreate, PatientResponse
 from app.deps import get_db, get_current_user
 from sqlalchemy.exc import IntegrityError
+from app.utils.rate_limiter import rate_limiter
 
 router = APIRouter(prefix="/patients", tags=["Patients"])
 
@@ -23,11 +24,13 @@ def create(
 
 @router.get("/")
 def list_all(
+    request: Request,
     name: str = None,
     phone: str = None,
     db: Session = Depends(get_db),
     user = Depends(get_current_user)
 ):
+    rate_limiter(request) 
     query = db.query(Patient)
 
     if name:
