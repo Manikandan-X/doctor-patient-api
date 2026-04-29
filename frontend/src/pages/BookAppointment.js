@@ -9,15 +9,47 @@ function BookAppointment() {
   const [patientId, setPatientId] = useState("");
   const [date, setDate] = useState("");
 
-  useEffect(() => {
-    API.get("/doctors/")
-      .then((res) => setDoctors(res.data))
-      .catch((err) => console.log("Doctor error:", err));
+  // ✅ NEW: state for live message (optional UI display)
+  const [liveMessage, setLiveMessage] = useState("");
 
-    API.get("/patients/")
-      .then((res) => setPatients(res.data))
-      .catch((err) => console.log("Patient error:", err));
-  }, []);
+  useEffect(() => {
+  // ✅ fetch doctors
+  API.get("/doctors/")
+    .then((res) => setDoctors(res.data))
+    .catch((err) => console.log("Doctor error:", err));
+
+  // ✅ fetch patients
+  API.get("/patients/")
+    .then((res) => setPatients(res.data))
+    .catch((err) => console.log("Patient error:", err));
+
+  // ✅ prevent duplicate websocket
+  if (window.ws) return;
+
+  const doctorId = 1;
+
+  const ws = new WebSocket(`ws://localhost:8000/ws/${doctorId}`);
+  window.ws = ws;
+
+  ws.onopen = () => {
+    console.log(`Connected to doctor ${doctorId}`);
+  };
+
+  ws.onmessage = (event) => {
+    console.log("Live Update:", event.data);
+    setLiveMessage(event.data);
+  };
+
+  ws.onerror = (err) => {
+    console.log("WebSocket error:", err);
+  };
+
+  ws.onclose = () => {
+    console.log("WebSocket closed");
+    window.ws = null;
+  };
+
+}, []);
 
   const book = async () => {
     try {
@@ -43,6 +75,13 @@ function BookAppointment() {
     <div style={styles.page}>
       <div style={styles.card}>
         <h2 style={styles.title}>Book Appointment</h2>
+
+        {/* ✅ LIVE MESSAGE UI */}
+        {liveMessage && (
+          <div style={styles.liveBox}>
+            🔔 {liveMessage}
+          </div>
+        )}
 
         {/* Doctor */}
         <label style={styles.label}>Select Doctor</label>
@@ -127,5 +166,14 @@ const styles = {
     color: "white",
     fontWeight: "bold",
     cursor: "pointer",
+  },
+
+  // ✅ NEW STYLE
+  liveBox: {
+    backgroundColor: "#e8f8f5",
+    border: "1px solid #1abc9c",
+    padding: "10px",
+    borderRadius: "5px",
+    fontSize: "14px",
   },
 };
