@@ -1,59 +1,87 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
 from app.models import Doctor
-from app.schemas import DoctorCreate, DoctorResponse
-from app.deps import get_db, get_current_user
-from app.utils.rate_limiter import rate_limiter
+from app.schemas.doctor import DoctorCreate
+from app.deps import get_db, require_role
+from app.services.doctor_service import create_doctor, get_doctors
+from app.utils.response import success_response
 
 router = APIRouter(prefix="/doctors", tags=["Doctors"])
 
 
-# ✅ CREATE
-@router.post("/", response_model=DoctorResponse)
-def create(doc: DoctorCreate, db: Session = Depends(get_db)):
-    doctor = Doctor(**doc.dict())
-    db.add(doctor)
-    db.commit()
-    db.refresh(doctor)
-    return doctor
+# =========================
+# ✅ CREATE (ADMIN ONLY)
+# =========================
+@router.post("/")
+def create(
+    doc: DoctorCreate,
+    db: Session = Depends(get_db),
+    user=Depends(require_role("admin"))
+):
+    doctor = create_doctor(db, doc)
+
+    return success_response(
+        data=doctor,
+        message="Doctor created successfully"
+    )
 
 
-# ✅ GET ALL + PAGINATION + FILTER
-@router.get("/", response_model=list[DoctorResponse])
+# =========================
+# ✅ GET ALL
+# =========================
+@router.get("/")
 def list_all(
-    request: Request,
     skip: int = 0,
     limit: int = 10,
-    specialization: str = None,
+    sort_by: str = "id",
+    order: str = "asc",
     db: Session = Depends(get_db)
 ):
-    rate_limiter(request)
-    query = db.query(Doctor)
+    doctors = get_doctors(db, skip, limit, sort_by, order)
 
-    # only active doctors
-    query = query.filter(Doctor.is_active == True)
-
-    # filter by specialization
-    if specialization:
-        query = query.filter(Doctor.specialization == specialization)
-
-    return query.offset(skip).limit(limit).all()
+    return success_response(
+        data=doctors,
+        message="Doctors fetched successfully"
+    )
 
 
-# ✅ SEARCH (NEW FEATURE)
-@router.get("/search", response_model=list[DoctorResponse])
+# =========================
+# ✅ SEARCH
+# =========================
+@router.get("/search")
 def search_doctors(
-    name: str = Query(...),
+    name: str = Query(None),
+    specialization: str = Query(None),
     db: Session = Depends(get_db)
 ):
-    return db.query(Doctor).filter(Doctor.name.contains(name)).all()
+    query = db.query(Doctor).filter(Doctor.is_active == True)
+
+    if name:
+        query = query.filter(Doctor.name.ilike(f"%{name}%"))
+
+    if specialization:
+        query = query.filter(Doctor.specialization.ilike(f"%{specialization}%"))
+
+    doctors = query.all()
+
+    return success_response(
+        data=doctors,
+        message="Search results fetched"
+    )
 
 
+# =========================
 # ✅ UPDATE
-@router.put("/{id}", response_model=DoctorResponse)
-def update(id: int, data: DoctorCreate, db: Session = Depends(get_db)):
+# =========================
+@router.put("/{id}")
+def update(
+    id: int,
+    data: DoctorCreate,
+    db: Session = Depends(get_db),
+    user=Depends(require_role("admin"))
+):
     doc = db.get(Doctor, id)
 
     if not doc:
@@ -64,15 +92,21 @@ def update(id: int, data: DoctorCreate, db: Session = Depends(get_db)):
 
     db.commit()
     db.refresh(doc)
-    return doc
+
+    return success_response(
+        data=doc,
+        message="Doctor updated successfully"
+    )
 
 
+# =========================
 # ✅ DELETE
+# =========================
 @router.delete("/{id}")
 def delete(
     id: int,
     db: Session = Depends(get_db),
-    user=Depends(get_current_user)
+    user=Depends(require_role("admin"))
 ):
     doc = db.get(Doctor, id)
 
@@ -82,22 +116,25 @@ def delete(
     try:
         db.delete(doc)
         db.commit()
-        return {"msg": "Doctor deleted"}
+
+        return success_response(message="Doctor deleted successfully")
 
     except IntegrityError:
         db.rollback()
         raise HTTPException(
             status_code=400,
-            detail="Cannot delete doctor. Appointments exist for this doctor."
+            detail="Cannot delete doctor. Appointments exist."
         )
 
 
+# =========================
 # ✅ ACTIVATE
-@router.patch("/{id}/activate", response_model=DoctorResponse)
+# =========================
+@router.patch("/{id}/activate")
 def activate(
     id: int,
     db: Session = Depends(get_db),
-    user=Depends(get_current_user)
+    user=Depends(require_role("admin"))
 ):
     doc = db.get(Doctor, id)
 
@@ -108,15 +145,20 @@ def activate(
     db.commit()
     db.refresh(doc)
 
-    return doc
+    return success_response(
+        data=doc,
+        message="Doctor activated"
+    )
 
 
+# =========================
 # ✅ DEACTIVATE
-@router.patch("/{id}/deactivate", response_model=DoctorResponse)
+# =========================
+@router.patch("/{id}/deactivate")
 def deactivate(
     id: int,
     db: Session = Depends(get_db),
-    user=Depends(get_current_user)
+    user=Depends(require_role("admin"))
 ):
     doc = db.get(Doctor, id)
 
@@ -127,4 +169,7 @@ def deactivate(
     db.commit()
     db.refresh(doc)
 
-    return doc
+    return success_response(
+        data=doc,
+        message="Doctor deactivated"
+    )

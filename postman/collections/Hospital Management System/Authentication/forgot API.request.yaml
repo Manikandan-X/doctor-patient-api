@@ -1,0 +1,11 @@
+$kind: http-request
+url: http://127.0.0.1:8000/auth/forgot-password
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"email\": \"kathir@gmail.com\"\r
+
+    }"
+order: 3440492642485449

@@ -1,0 +1,13 @@
+$kind: http-request
+url: http://127.0.0.1:8000/appointments/?skip=0&limit=10&sort_by=id&order=asc
+method: GET
+queryParams:
+  skip: "0"
+  limit: "10"
+  sort_by: id
+  order: asc
+auth:
+  type: bearer
+  credentials:
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjQsInN1YiI6InJpdGhpa0BnbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NzgyMTk3NDh9.UcWKShntDcqGwdgjWMIKQy47h8lol3jVzDCQb-fiGrA
+order: 3472864819329000

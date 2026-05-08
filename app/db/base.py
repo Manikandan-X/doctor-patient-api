@@ -1,0 +1,10 @@
+from sqlalchemy.orm import DeclarativeBase
+
+class Base(DeclarativeBase):
+    pass
+
+# IMPORTANT: import all models so tables are registered
+from app.models.user import User
+from app.models.patient import Patient
+from app.models.doctor import Doctor
+from app.models.appointment import Appointment

@@ -1,0 +1,19 @@
+$kind: http-request
+url: http://127.0.0.1:8000/appointments/
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"doctor_id\": 1,\r
+
+    \  \"patient_id\": 1,\r
+
+    \  \"appointment_date\": \"2026-05-08\"\r
+
+    }"
+auth:
+  type: bearer
+  credentials:
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjQsInN1YiI6InJpdGhpa0BnbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NzgxODYwNzh9.xYwuOY-dJw0-0R_f7dSxSaAyWGsBKX3rWTjPsuIdnJU
+order: 1778184416995

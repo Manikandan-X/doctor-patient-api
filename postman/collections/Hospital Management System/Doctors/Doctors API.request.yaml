@@ -1,0 +1,12 @@
+$kind: http-request
+name: Doctors API
+url: http://localhost:8000/doctors
+method: GET
+body:
+  type: json
+  content: ""
+auth:
+  type: bearer
+  credentials:
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzAsInN1YiI6Im1hbmlAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiZXhwIjoxNzc4MjI2MDA3fQ.RoEKS65fNWEqVWtH5Y7x5FAKblPO9Gs4NzMMGNxk3Bk
+order: 1778182981239

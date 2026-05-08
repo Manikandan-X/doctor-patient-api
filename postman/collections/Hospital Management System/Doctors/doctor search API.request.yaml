@@ -1,0 +1,14 @@
+$kind: http-request
+url: http://127.0.0.1:8000/doctors/search?name=aishu&specialization=Cardiologist
+method: GET
+queryParams:
+  name: aishu
+  specialization: Cardiologist
+body:
+  type: json
+  content: ""
+auth:
+  type: bearer
+  credentials:
+    token: http://127.0.0.1:8000/doctors/search?name=aishu&specialization=Cardiologist
+order: 2489470813716162

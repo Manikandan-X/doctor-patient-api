@@ -1,0 +1,13 @@
+$kind: http-request
+url: http://127.0.0.1:8000/appointments/filter?date=2026-05-09&status=pending&doctor_id=2&patient_id=2
+method: GET
+queryParams:
+  date: 2026-05-09
+  status: pending
+  doctor_id: "2"
+  patient_id: "2"
+auth:
+  type: bearer
+  credentials:
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjQsInN1YiI6InJpdGhpa0BnbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NzgyMTk3NDh9.UcWKShntDcqGwdgjWMIKQy47h8lol3jVzDCQb-fiGrA
+order: 4216311361234540

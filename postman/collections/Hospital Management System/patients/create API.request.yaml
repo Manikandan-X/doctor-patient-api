@@ -1,0 +1,20 @@
+$kind: http-request
+name: create API
+url: http://127.0.0.1:8000/patients/
+method: GET
+body:
+  type: json
+  content: "{\r
+
+    \  \"name\": \"reena\",\r
+
+    \  \"age\": 15,\r
+
+    \  \"phone\": \"587888758\"\r
+
+    }"
+auth:
+  type: bearer
+  credentials:
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzAsInN1YiI6Im1hbmlAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiZXhwIjoxNzc4MjI2MDA3fQ.RoEKS65fNWEqVWtH5Y7x5FAKblPO9Gs4NzMMGNxk3Bk
+order: 1778224588624
